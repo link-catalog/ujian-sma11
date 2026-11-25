@@ -1,0 +1,48 @@
+* { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+body { 
+  margin: 0; min-height: 100vh;
+  background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+  background-size: 400% 400%;
+  animation: gradasi 12s ease infinite;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+@keyframes gradasi {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.container { 
+  width: 100%; max-width: 720px; 
+  background: rgba(255,255,255,0.96); 
+  padding: 32px; border-radius: 24px; 
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  animation: naik 0.7s cubic-bezier(.2,.8,.2,1);
+  position: relative; overflow: hidden;
+}
+@keyframes naik { from { opacity: 0; transform: translateY(30px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+h1 { text-align: center; font-size: 34px; background: linear-gradient(90deg, #667eea, #764ba2, #f093fb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 8px; animation: goyang 3s ease infinite; }
+@keyframes goyang { 0%,100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } }
+p { color: #555; text-align: center; }
+.btn { display: block; text-align: center; padding: 16px; background: linear-gradient(90deg, #2563eb, #7c3aed); color: #fff; text-decoration: none; border: none; border-radius: 14px; margin: 12px 0; font-weight: bold; font-size: 16px; cursor: pointer; transition: all .3s ease; box-shadow: 0 8px 20px rgba(37,99,235,.3); }
+.btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 14px 35px rgba(37,99,235,.45); }
+.btn:active { transform: scale(.97); }
+.btn-admin { background: linear-gradient(90deg, #111827, #374151); box-shadow: 0 8px 20px rgba(0,0,0,.3); }
+input, select { width: 100%; padding: 14px; margin: 8px 0; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 15px; transition: all .3s; }
+input:focus, select:focus { outline: none; border-color: #7c3aed; box-shadow: 0 0 0 4px rgba(124,58,237,.15); transform: scale(1.01); }
+.soal-box { background: linear-gradient(135deg, #f8fafc, #eef2ff); padding: 20px; border-radius: 16px; margin: 16px 0; border: 1px solid #e0e7ff; animation: fadeIn .5s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+.opsi { display: block; padding: 14px; margin: 8px 0; background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer; transition: all .25s ease; }
+.opsi:hover { background: #eef2ff; border-color: #7c3aed; transform: translateX(6px); }
+.opsi.pilih { background: linear-gradient(90deg, #7c3aed, #2563eb); color: #fff; border-color: #7c3aed; transform: scale(1.02); box-shadow: 0 8px 20px rgba(124,58,237,.3); }
+.opsi input { width: auto; margin-right: 8px; }
+#timer { font-size: 30px; font-weight: bold; color: #dc2626; text-align: center; background: #fee2e2; padding: 12px; border-radius: 14px; animation: denyut 1s ease infinite; }
+@keyframes denyut { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+#timer.mauHabis { background: #dc2626; color: #fff; animation: getar .3s ease infinite; }
+@keyframes getar { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+#kamera { width: 170px; height: 130px; object-fit: cover; border-radius: 16px; position: fixed; bottom: 16px; right: 16px; border: 3px solid #fff; background: #000; box-shadow: 0 10px 30px rgba(0,0,0,.4); animation: naik .7s ease; }
+#progressBar { width: 100%; height: 12px; background: #e5e7eb; border-radius: 99px; overflow: hidden; margin: 10px 0; }
+#progressFill { height: 100%; width: 0%; background: linear-gradient(90deg, #667eea, #f093fb); border-radius: 99px; transition: width .5s cubic-bezier(.2,.8,.2,1); }
+#status, #pelanggaran { font-size: 13px; color: #666; text-align: center; }
+.note { font-size: 13px; color: #888; margin-top: 16px; }
+.confetti { position: fixed; width: 10px; height: 10px; top: -10px; z-index: 9999; animation: jatuh 3s linear forwards; }
+@keyframes jatuh { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Ujian</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+  <h1>Panel Admin</h1>
+  <p>Buat token, lihat hasil, reset ujian</p>
+  <input id="tokenBaru" placeholder="Token baru, contoh: UJIAN2026">
+  <button class="btn" onclick="buatToken()">Buat / Ganti Token</button>
+  <p id="infoToken"></p>
+  <button class="btn" onclick="tampilHasil()">Lihat Hasil</button>
+  <button class="btn" onclick="downloadCSV()">Download Hasil CSV</button>
+  <button class="btn btn-admin" onclick="resetUjian()">Reset Semua Hasil</button>
+  <div id="hasil"></div>
+</div>
+<script src="js/admin.js"></script>
+</body>
+</html>
