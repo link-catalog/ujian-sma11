@@ -5,11 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Ujian</title>
 <link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+<script src="js/supabase.js"></script>
 </head>
 <body>
 <div class="container">
-
-  <!-- FORM LOGIN ADMIN -->
   <div id="loginAdmin">
     <h1>🔐 Login Admin</h1>
     <p>Masukkan password untuk masuk ke Panel Admin</p>
@@ -17,8 +20,6 @@
     <button class="btn" onclick="cekPassword()">Masuk Admin</button>
     <p id="pesanSalah" style="color:red;"></p>
   </div>
-
-  <!-- PANEL ADMIN - AWALNYA DISEMBUNYIKAN -->
   <div id="panelAdmin" style="display:none;">
     <h1>Panel Admin</h1>
     <p>Buat token, lihat hasil, reset ujian</p>
@@ -26,11 +27,11 @@
     <button class="btn" onclick="buatToken()">Buat / Ganti Token</button>
     <p id="infoToken"></p>
     <button class="btn" onclick="tampilHasil()">Lihat Hasil</button>
-    <button class="btn" onclick="downloadCSV()">Download Hasil CSV</button>
+    <button class="btn" onclick="downloadExcel()">📊 Download Excel</button>
+    <button class="btn" onclick="downloadPDF()">📄 Download PDF</button>
     <button class="btn btn-admin" onclick="resetUjian()">Reset Semua Hasil</button>
     <div id="hasil"></div>
   </div>
-
 </div>
 <script src="js/admin.js"></script>
 <script>

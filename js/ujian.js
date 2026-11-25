@@ -16,8 +16,9 @@ async function mulaiUjian() {
   let token = document.getElementById('token').value.trim();
   mapelDipilih = document.getElementById('mapel').value;
   if (!namaPeserta || !token) { alert("Isi nama dan token dulu!"); return; }
-  let tokenValid = localStorage.getItem('token_ujian');
-  if (tokenValid && token !== tokenValid) { alert("Token salah!"); return; }
+  const { data: tokenData } = await supabaseClient.from('token_ujian').select('token').eq('id', 1).single();
+if (!tokenData || token !== tokenData.token) { alert("Token salah!"); return; }
+   { alert("Token salah!"); return; }
   try {
     let stream = await navigator.mediaDevices.getUserMedia({ video: true });
     document.getElementById('kamera').srcObject = stream;

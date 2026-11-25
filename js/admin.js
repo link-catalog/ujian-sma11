@@ -1,32 +1,25 @@
-function tampilHasil() {
-  const hasil = JSON.parse(localStorage.getItem('hasil_ujian') || '[]');
+async function tampilHasil() {
+  const { data: hasil, error } = await supabaseClient.from('hasil_ujian').select('*').order('waktu', { ascending: false });
   const div = document.getElementById('hasil');
-  if (hasil.length === 0) {
-    div.innerHTML = "<p>Belum ada hasil.</p>";
-    return;
-  }
+  if (error || !hasil || hasil.length === 0) { div.innerHTML = "<p>Belum ada hasil.</p>"; return; }
   let html = "";
   hasil.forEach((h, idx) => {
     html += `<div style="border:1px solid #ddd; padding:12px; margin:10px 0; border-radius:8px; background:#fff;">
       <b>${idx+1}. ${h.nama} - ${h.mapel}</b><br>
-      Benar ${h.benar}/${h.total} - Nilai ${h.nilai} - Pelanggaran ${h.pelanggaran} - ${h.waktu}<br>
-      <button onclick="lihatDetail(${idx})" style="margin-top:8px; padding:6px 12px; cursor:pointer;">🔍 Lihat Detail Soal</button>
-      <div id="detail-${idx}" style="display:none; margin-top:10px;"></div>
+      Benar ${h.benar}/${h.total} - Nilai ${h.nilai} - Pelanggaran ${h.pelanggaran} - ${new Date(h.waktu).toLocaleString('id-ID')}<br>
+      <button onclick="lihatDetail('${h.id}')" style="margin-top:8px; padding:6px 12px; cursor:pointer;">🔍 Lihat Detail Soal</button>
+      <div id="detail-${h.id}" style="display:none; margin-top:10px;"></div>
     </div>`;
   });
   div.innerHTML = html;
+  window._hasilCache = hasil;
 }
 
-function lihatDetail(idx) {
-  const hasil = JSON.parse(localStorage.getItem('hasil_ujian') || '[]');
-  const h = hasil[idx];
-  const div = document.getElementById(`detail-${idx}`);
+async function lihatDetail(id) {
+  const div = document.getElementById(`detail-${id}`);
   if (div.style.display === "block") { div.style.display = "none"; return; }
-  if (!h.detail) {
-    div.innerHTML = "<p style='color:red'>Detail tidak tersedia (ujian lama, sebelum upgrade).</p>";
-    div.style.display = "block";
-    return;
-  }
+  const h = window._hasilCache.find(x => x.id === id);
+  if (!h || !h.detail) { div.innerHTML = "<p>Detail tidak tersedia.</p>"; div.style.display = "block"; return; }
   let html = "<b>Detail Jawaban:</b><br>";
   h.detail.forEach(d => {
     const icon = d.benar ? "✅" : "❌";
@@ -42,36 +35,43 @@ function lihatDetail(idx) {
   div.style.display = "block";
 }
 
-function downloadCSV() {
-  const hasil = JSON.parse(localStorage.getItem('hasil_ujian') || '[]');
-  if (hasil.length === 0) { alert("Belum ada hasil"); return; }
-  let csv = "Nama,Mapel,Benar,Total,Nilai,Pelanggaran,Waktu,Detail\n";
-  hasil.forEach(h => {
-    let detailStr = "";
-    if (h.detail) {
-      detailStr = h.detail.map(d => `No${d.no}:${d.jawabanSiswa}${d.benar ? "(Benar)" : "(Salah,Kunci:" + d.kunci + ")"}`).join(" | ");
-    } else {
-      detailStr = "Tidak ada detail";
-    }
-    csv += `"${h.nama}","${h.mapel}",${h.benar},${h.total},${h.nilai},${h.pelanggaran},"${h.waktu}","${detailStr}"\n`;
-  });
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = "hasil_ujian.csv";
-  a.click();
+async function downloadExcel() {
+  const { data: hasil } = await supabaseClient.from('hasil_ujian').select('*').order('waktu', { ascending: true });
+  if (!hasil || hasil.length === 0) { alert("Belum ada hasil"); return; }
+  const rows = hasil.map(h => ({
+    Nama: h.nama, Mapel: h.mapel, Benar: h.benar, Total: h.total, Nilai: h.nilai,
+    Pelanggaran: h.pelanggaran, Waktu: new Date(h.waktu).toLocaleString('id-ID'),
+    Detail: h.detail ? h.detail.map(d => `No${d.no}:${d.jawabanSiswa}${d.benar ? "(Benar)" : "(Salah,Kunci:" + d.kunci + ")"}`).join(" | ") : "Tidak ada detail"
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Hasil Ujian");
+  XLSX.writeFile(wb, "hasil_ujian.xlsx");
 }
 
-function buatToken() {
+async function downloadPDF() {
+  const { data: hasil } = await supabaseClient.from('hasil_ujian').select('*').order('waktu', { ascending: true });
+  if (!hasil || hasil.length === 0) { alert("Belum ada hasil"); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(16); doc.text("LAPORAN HASIL UJIAN", 14, 15);
+  doc.setFontSize(10); doc.text("SMA 11 - " + new Date().toLocaleDateString('id-ID'), 14, 22);
+  const body = hasil.map(h => [h.nama, h.mapel, h.benar + "/" + h.total, h.nilai, h.pelanggaran, new Date(h.waktu).toLocaleString('id-ID')]);
+  doc.autoTable({ head: [["Nama","Mapel","Benar","Nilai","Pelanggaran","Waktu"]], body: body, startY: 28 });
+  doc.save("laporan_ujian.pdf");
+}
+
+async function buatToken() {
   const token = document.getElementById('tokenBaru').value.trim();
   if (!token) { alert("Isi token dulu!"); return; }
-  localStorage.setItem('token_ujian', token);
+  const { error } = await supabaseClient.from('token_ujian').update({ token: token, updated_at: new Date().toISOString() }).eq('id', 1);
+  if (error) { alert("Gagal ganti token: " + error.message); return; }
   document.getElementById('infoToken').innerText = "Token sekarang: " + token;
+  alert("Token berhasil diganti!");
 }
 
-function resetUjian() {
-  if (!confirm("Yakin reset semua hasil?")) return;
-  localStorage.removeItem('hasil_ujian');
+async function resetUjian() {
+  if (!confirm("Yakin hapus semua hasil?")) return;
+  await supabaseClient.from('hasil_ujian').delete().neq('id', '00000000-0000-0000-0000-000000000000');
   tampilHasil();
 }
