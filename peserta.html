@@ -1,53 +1,48 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ujian Peserta</title>
-<link rel="stylesheet" href="css/style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ujian Peserta - SMA 11</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
 </head>
 <body>
-<div class="container">
-  <h1>Ujian SMA Kelas 11</h1>
-  <p>Semangat ya! Kamu pasti bisa! 💪</p>
-  <div id="formLogin">
-    <input id="nama" placeholder="Nama Lengkap">
-    <input id="token" placeholder="Token Ujian dari Admin">
-    <select id="mapel">
-      <option value="matematika">Matematika</option>
-      <option value="bahasa_indonesia">Bahasa Indonesia</option>
-      <option value="bahasa_inggris">Bahasa Inggris</option>
-      <option value="fisika">Fisika</option>
-      <option value="kimia">Kimia</option>
-      <option value="biologi">Biologi</option>
-      <option value="sejarah">Sejarah</option>
-      <option value="geografi">Geografi</option>
-      <option value="ekonomi">Ekonomi</option>
-      <option value="sosiologi">Sosiologi</option>
-      <option value="ppkn">PPKn</option>
-      <option value="informatika">Informatika</option>
-      <option value="hiragana">Bahasa Jepang - Hiragana</option>
-    </select>
-    <button class="btn" onclick="mulaiUjian()">Mulai Ujian - Wajib Kamera & Fullscreen</button>
-    <p id="status"></p>
-  </div>
-  <div id="areaUjian" style="display:none">
-    <p id="infoMapel"></p>
-    <p id="timer">90 detik</p>
-    <p id="progress"></p>
-    <div id="progressBar"><div id="progressFill"></div></div>
-    <div class="soal-box">
-      <p id="soal"></p>
-      <div id="opsi"></div>
+  <div class="container">
+    <h1>Ujian Online SMA 11</h1>
+
+    <div id="formLogin">
+      <input type="text" id="nama" placeholder="Nama Lengkap" required>
+      <input type="text" id="token" placeholder="Token Ujian" required>
+      <select id="mapel">
+        <option value="Biologi">Biologi</option>
+        <option value="Matematika">Matematika</option>
+        <option value="Fisika">Fisika</option>
+        <option value="Kimia">Kimia</option>
+        <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+        <option value="Bahasa Inggris">Bahasa Inggris</option>
+      </select>
+      <button onclick="mulaiUjian()">Mulai Ujian</button>
     </div>
-    <button class="btn" onclick="nextSoal()">Soal Berikutnya</button>
-    <p id="pelanggaran">Pelanggaran: 0 / 3</p>
+
+    <div id="areaUjian" style="display:none;">
+      <div class="info">
+        <span id="infoNama"></span> | <span id="infoMapel"></span> | <span id="timer">60:00</span>
+      </div>
+      <video id="kamera" autoplay playsinline muted style="width:100%; max-width:400px; border-radius:8px; margin:10px 0;"></video>
+      <div id="soalContainer"></div>
+      <button onclick="selesaiUjian()">Selesai Ujian</button>
+    </div>
+
+    <div id="hasil" style="display:none;">
+      <h2>Hasil Ujian</h2>
+      <p id="nilaiAkhir"></p>
+      <p id="pesanHasil"></p>
+    </div>
   </div>
-</div>
-<video id="kamera" autoplay muted playsinline></video>
-<script src="js/data-soal.js"></script>
-<script src="js/ujian.js"></script>
+
+  <script src="js/data-soal.js"></script>
+  <script src="js/ujian.js"></script>
 </body>
 </html>

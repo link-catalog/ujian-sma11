@@ -16,9 +16,8 @@ async function mulaiUjian() {
   let token = document.getElementById('token').value.trim();
   mapelDipilih = document.getElementById('mapel').value;
   if (!namaPeserta || !token) { alert("Isi nama dan token dulu!"); return; }
-  const { data: tokenData } = await supabaseClient.from('token_ujian').select('token').eq('id', 1).single();
-if (!tokenData || token !== tokenData.token) { alert("Token salah!"); return; }
-   { alert("Token salah!"); return; }
+  const { data: tokenData, error } = await supabaseClient.from('token_ujian').select('token').eq('id', 1).single();
+  if (error || !tokenData || token !== tokenData.token) { alert("Token salah! Minta token ke Admin."); return; }
   try {
     let stream = await navigator.mediaDevices.getUserMedia({ video: true });
     document.getElementById('kamera').srcObject = stream;
@@ -66,13 +65,11 @@ function nextSoal() {
   tampilSoal();
 }
 
-function selesaiUjian() {
+async function selesaiUjian() {
   clearInterval(timer);
   let benar = 0;
   soalAcak.forEach((s,i) => { if (jawaban[i] === s.jawab) benar++; });
   let nilai = Math.round((benar / soalAcak.length) * 100);
-
-  // === BARU: DETAIL PER SOAL ===
   const huruf = ["A","B","C","D","E"];
   const detail = soalAcak.map((s, i) => {
     const jwb = jawaban[i];
@@ -87,17 +84,13 @@ function selesaiUjian() {
       benar: jwb === s.jawab
     };
   });
-
-  let hasil = { 
-    nama: namaPeserta, 
-    mapel: mapelDipilih, 
-    benar: benar, 
-    total: soalAcak.length, 
-    nilai: nilai, 
-    pelanggaran: pelanggaran, 
-    waktu: new Date().toLocaleString('id-ID'),
-    detail: detail
-  };
+  let hasil = { nama: namaPeserta, mapel: mapelDipilih, benar: benar, total: soalAcak.length, nilai: nilai, pelanggaran: pelanggaran, waktu: new Date().toLocaleString('id-ID'), detail: detail };
+  // SIMPAN KE SUPABASE
+  const { error } = await supabaseClient.from('hasil_ujian').insert([{
+    nama: namaPeserta, mapel: mapelDipilih, benar: benar, total: soalAcak.length, nilai: nilai, pelanggaran: pelanggaran, detail: detail
+  }]);
+  if (error) { console.error("Gagal simpan ke Supabase:", error); alert("Gagal simpan ke server, tapi hasil tetap ditampilkan. Coba screenshot."); }
+  // Backup lokal
   let semua = JSON.parse(localStorage.getItem('hasil_ujian') || '[]');
   semua.push(hasil);
   localStorage.setItem('hasil_ujian', JSON.stringify(semua));
