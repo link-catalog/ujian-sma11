@@ -8,16 +8,45 @@
 </head>
 <body>
 <div class="container">
-  <h1>Panel Admin</h1>
-  <p>Buat token, lihat hasil, reset ujian</p>
-  <input id="tokenBaru" placeholder="Token baru, contoh: UJIAN2026">
-  <button class="btn" onclick="buatToken()">Buat / Ganti Token</button>
-  <p id="infoToken"></p>
-  <button class="btn" onclick="tampilHasil()">Lihat Hasil</button>
-  <button class="btn" onclick="downloadCSV()">Download Hasil CSV</button>
-  <button class="btn btn-admin" onclick="resetUjian()">Reset Semua Hasil</button>
-  <div id="hasil"></div>
+
+  <!-- FORM LOGIN ADMIN -->
+  <div id="loginAdmin">
+    <h1>🔐 Login Admin</h1>
+    <p>Masukkan password untuk masuk ke Panel Admin</p>
+    <input type="password" id="passAdmin" placeholder="Password Admin">
+    <button class="btn" onclick="cekPassword()">Masuk Admin</button>
+    <p id="pesanSalah" style="color:red;"></p>
+  </div>
+
+  <!-- PANEL ADMIN - AWALNYA DISEMBUNYIKAN -->
+  <div id="panelAdmin" style="display:none;">
+    <h1>Panel Admin</h1>
+    <p>Buat token, lihat hasil, reset ujian</p>
+    <input id="tokenBaru" placeholder="Token baru, contoh: UJIAN2026">
+    <button class="btn" onclick="buatToken()">Buat / Ganti Token</button>
+    <p id="infoToken"></p>
+    <button class="btn" onclick="tampilHasil()">Lihat Hasil</button>
+    <button class="btn" onclick="downloadCSV()">Download Hasil CSV</button>
+    <button class="btn btn-admin" onclick="resetUjian()">Reset Semua Hasil</button>
+    <div id="hasil"></div>
+  </div>
+
 </div>
 <script src="js/admin.js"></script>
+<script>
+const ADMIN_PASSWORD = "guru2026";
+function cekPassword() {
+  const pass = document.getElementById("passAdmin").value;
+  if (pass === ADMIN_PASSWORD) {
+    document.getElementById("loginAdmin").style.display = "none";
+    document.getElementById("panelAdmin").style.display = "block";
+  } else {
+    document.getElementById("pesanSalah").innerText = "Password salah! Coba lagi.";
+  }
+}
+document.getElementById("passAdmin").addEventListener("keyup", function(e) {
+  if (e.key === "Enter") cekPassword();
+});
+</script>
 </body>
 </html>
