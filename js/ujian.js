@@ -70,7 +70,33 @@ function selesaiUjian() {
   let benar = 0;
   soalAcak.forEach((s,i) => { if (jawaban[i] === s.jawab) benar++; });
   let nilai = Math.round((benar / soalAcak.length) * 100);
-  let hasil = { nama: namaPeserta, mapel: mapelDipilih, benar: benar, total: soalAcak.length, nilai: nilai, pelanggaran: pelanggaran, waktu: new Date().toLocaleString() };
+
+  // === BARU: DETAIL PER SOAL ===
+  const huruf = ["A","B","C","D","E"];
+  const detail = soalAcak.map((s, i) => {
+    const jwb = jawaban[i];
+    return {
+      no: i + 1,
+      soal: s.q,
+      opsi: s.opsi,
+      jawabanSiswa: jwb === -1 ? "Kosong" : huruf[jwb],
+      jawabanSiswaIndex: jwb,
+      kunci: huruf[s.jawab],
+      kunciIndex: s.jawab,
+      benar: jwb === s.jawab
+    };
+  });
+
+  let hasil = { 
+    nama: namaPeserta, 
+    mapel: mapelDipilih, 
+    benar: benar, 
+    total: soalAcak.length, 
+    nilai: nilai, 
+    pelanggaran: pelanggaran, 
+    waktu: new Date().toLocaleString('id-ID'),
+    detail: detail
+  };
   let semua = JSON.parse(localStorage.getItem('hasil_ujian') || '[]');
   semua.push(hasil);
   localStorage.setItem('hasil_ujian', JSON.stringify(semua));
